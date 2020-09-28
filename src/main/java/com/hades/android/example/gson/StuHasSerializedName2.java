@@ -6,8 +6,7 @@ public class StuHasSerializedName2 {
     private String name;
     private int age;
 
-    // 三个属性(email、email_address、emailAddress)都中出现任意一个时均可以得到正确的结果 emailAddress
-    // 当多种情况同时出时，以最后一个出现的值为准
+    // 三个属性(email、email_address、emailAddress)都中出现任意一个时均可以得到正确的结果.当多种情况同时出时，以最后一个出现的值为准
     @SerializedName(value = "emailAddress", alternate = {"email", "email_address"})
     private String email;
 

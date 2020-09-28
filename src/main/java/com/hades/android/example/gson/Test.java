@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Test {
     private static final String TAG = Test.class.getSimpleName();
@@ -25,6 +22,8 @@ public class Test {
     }
 
     private void current() {
+        serializedNameSerialization2();
+        serializedNameDeserialization2();
     }
 
     private void all() {
@@ -44,14 +43,10 @@ public class Test {
         collectionDeserialization();
         collectionDeserialization2();
 
-        genericTypesSerialization();
-        genericTypesDeserialization();
+        genericTypes_Serialization_Deserialization();
 
         serializedNameSerialization();
         serializedNameDeserialization();
-
-        serializedNameSerialization2();
-        serializedNameDeserialization2();
     }
 
     /**
@@ -95,8 +90,8 @@ public class Test {
         int[] ints = {1, 2, 3, 4, 5};
         String[] strings = {"abc", "def", "ghi"};
 
-        String s1 = gson.toJson(ints);     // ==> [1,2,3,4,5]
-        String s2 = gson.toJson(strings);  // ==> ["abc", "def", "ghi"]
+        String s1 = gson.toJson(ints);     // [1,2,3,4,5]
+        String s2 = gson.toJson(strings);  // ["abc", "def", "ghi"]
 
         Log.d(TAG, s1);
         Log.d(TAG, s2);
@@ -110,19 +105,12 @@ public class Test {
 
         // Deserialization
         int[] ints2 = gson.fromJson(jsonArray, int[].class);
-
-        StringBuilder builder = new StringBuilder();
-
-        for (int i : ints2) {
-            builder.append(i + ",");
-        }
-        Log.d(TAG, builder.toString()); // => 1,2,3,4,5,
+        System.out.println(Arrays.toString(ints2));
     }
 
     /**
      * bean -> json string
      */
-    // TODO:顺序？
     public void customSerialization() {
         String json = gson.toJson(new Stu());
         Log.d(TAG, json); // => {"age":25,"firstName":"Catty","lastName":"Smith","sex":"male"}
@@ -150,7 +138,7 @@ public class Test {
     }
 
     /**
-     * json string -> bean
+     * json string -> transient bean
      */
     public void transientCustomDeserialization() {
 //        String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
@@ -158,6 +146,9 @@ public class Test {
         Log.d(TAG, gson.fromJson(json, StuHasTransient.class).toString());
     }
 
+    /**
+     * Collection -> json string
+     */
     public void collectionSerialization() {
         Collection<Integer> ints = new ArrayList<>();
         ints.add(1);
@@ -165,7 +156,6 @@ public class Test {
         ints.add(3);
         ints.add(4);
         ints.add(5);
-        ints.add(100);
 
         // Serialization
         String json = gson.toJson(ints);  // ==> json is [1,2,3,4,5]
@@ -196,7 +186,7 @@ public class Test {
         Log.d(TAG, "collectionDeserialization2," + json);
 
         // Deserialization
-        Type collectionType = new TypeToken<ArrayList<Integer>>() {
+        Type collectionType = new TypeToken<List<Integer>>() {
         }.getType();
 
         Collection<Integer> ints2 = gson.fromJson(json, collectionType);
@@ -206,33 +196,18 @@ public class Test {
     /**
      * Generic Types
      */
-    public void genericTypesSerialization() {
+    public void genericTypes_Serialization_Deserialization() {
+        Foo<Integer> foo12 = new Foo<>(1024);
+        // Generic Types -> json string
+        String json = gson.toJson(foo12);
+        Log.d(TAG, "genericTypes: " + json); // {"value":1024}
+        //  json string -> Generic Types
+        Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo12.getClass()));   // {value=1024.0}
 
-
-//        Foo<String> foo1 = new Foo<>("abc");
-//        String json = gson.toJson(foo1);
-//        Log.d(TAG, "genericTypesSerialization: json=" + json); // => {"value":"abc"}
-
-
-//        Foo<Integer> foo12 = new Foo<Integer>(1024);
-//        json = gson.toJson(foo12);
-//        Log.d(TAG, "genericTypes: " + json);
-//        Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo1.getClass()));
-//
-//        Foo<Stu> foo13 = new Foo<Stu>(new Stu());
-//        json = gson.toJson(foo13);
-//        Log.d(TAG, "genericTypes: " + json);
-//        Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo1.getClass()));
-    }
-
-    /**
-     * 泛型擦除:对于Java来说List<String> 和List<User> 这俩个的字节码文件只一个那就是List.class
-     */
-    private void genericTypesDeserialization() {
-        String jsonArray = "[\"Android\",\"Java\",\"PHP\"]";
-        List<String> stringListJson = gson.fromJson(jsonArray, new TypeToken<List<String>>() {
-        }.getType());
-        Log.d(TAG, "genericTypesDeserialization: " + stringListJson); // => [Android, Java, PHP]
+        Foo<Stu> foo13 = new Foo<>(new Stu());
+        json = gson.toJson(foo13);
+        Log.d(TAG, "genericTypes: " + json);    // {"value":{"firstName":"Catty","lastName":"Smith","sex":"male","age":25}}
+        Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo13.getClass()));   // {value={firstName=Catty, lastName=Smith, sex=male, age=25.0}}
     }
 
     /*
@@ -258,13 +233,12 @@ public class Test {
         StuHasSerializedName2 stu = new StuHasSerializedName2("A", 24, "ABC@example.com");
         String json = gson.toJson(stu);
 
-        Log.d(TAG, json); // => {"age":24,"emailAddress":"ABC@example.com","name":"A"}
+        Log.d(TAG, json); // => {"name":"A","age":24,"emailAddress":"ABC@example.com"}
     }
 
     private void serializedNameDeserialization2() {
-        String json = "{\"age\":24,\"email_address\":\"ABC@example.com\",\"name\":\"A\"}";
-        // ERROR:com.google.gson.JsonSyntaxException: com.google.gson.stream.MalformedJsonException: Expected name at line 1 column 2 path
+        String json = "{\"age\":24,\"email_address\":\"ABC@example.com\",\"email\":\"ABC@example.com\",\"name\":\"A\"}";
         StuHasSerializedName2 stu = gson.fromJson(json, StuHasSerializedName2.class);
-        Log.d(TAG, stu.toString());
+        Log.d(TAG, stu.toString()); // {name='A', age=24, email='ABC@example.com'}
     }
 }

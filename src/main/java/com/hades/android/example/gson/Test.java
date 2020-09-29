@@ -27,7 +27,7 @@ public class Test {
     }
 
     private void current() {
-        collectionDeserialization();
+
     }
 
     private void all() {
@@ -53,6 +53,11 @@ public class Test {
         expose();
         transientCustomSerialization();
         transientCustomDeserialization();
+
+        check_null();
+
+        nested_class_serialization();
+        nested_class_deserialization();
     }
 
     /**
@@ -314,4 +319,25 @@ public class Test {
         User user2 = gson.fromJson(json2, User.class);
         System.out.println(user2.toString()); // {name='C', email='null', isDeveloper=true, age=0}
     }
+
+    private void nested_class_serialization() {
+        Person person = new Person();
+        person.name = "A";
+        person.age = 25;
+
+        Address address = new Address();
+        address.city = "Beijing";
+        address.country = "China";
+        person.address = address;
+
+        String json = gson.toJson(person);
+        System.out.println(json); // {"name":"A","age":25,"address":{"city":"Beijing","country":"China"}}
+    }
+
+    private void nested_class_deserialization() {
+        String json = "{\"name\":\"A\",\"age\":25,\"address\":{\"city\":\"Beijing\",\"country\":\"China\"}}";
+        Person person = gson.fromJson(json, Person.class);
+        System.out.println(person.toString()); // {name='A', age=25, address=Address{city='Beijing', country='China'}}
+    }
+
 }

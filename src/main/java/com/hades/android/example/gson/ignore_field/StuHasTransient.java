@@ -1,4 +1,4 @@
-package com.hades.android.example.gson;
+package com.hades.android.example.gson.ignore_field;
 
 public class StuHasTransient {
     public String firstName;

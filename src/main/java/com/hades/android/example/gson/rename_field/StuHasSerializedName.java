@@ -1,4 +1,4 @@
-package com.hades.android.example.gson;
+package com.hades.android.example.gson.rename_field;
 
 import com.google.gson.annotations.SerializedName;
 

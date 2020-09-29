@@ -1,7 +1,12 @@
 package com.hades.android.example.gson;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.hades.android.example.gson.ignore_field.StuHasExpose;
+import com.hades.android.example.gson.ignore_field.StuHasTransient;
+import com.hades.android.example.gson.rename_field.StuHasSerializedName;
+import com.hades.android.example.gson.rename_field.StuHasSerializedName2;
 
 import java.lang.reflect.Type;
 import java.util.*;
@@ -22,8 +27,6 @@ public class Test {
     }
 
     private void current() {
-        serializedNameSerialization2();
-        serializedNameDeserialization2();
     }
 
     private void all() {
@@ -36,9 +39,6 @@ public class Test {
         customSerialization();
         customDeserialization();
 
-        transientCustomSerialization();
-        transientCustomDeserialization();
-
         collectionSerialization();
         collectionDeserialization();
         collectionDeserialization2();
@@ -47,6 +47,12 @@ public class Test {
 
         serializedNameSerialization();
         serializedNameDeserialization();
+        serializedNameSerialization2();
+        serializedNameDeserialization2();
+
+        expose();
+        transientCustomSerialization();
+        transientCustomDeserialization();
     }
 
     /**
@@ -129,24 +135,6 @@ public class Test {
 
 
     /**
-     * transient bean -> json string
-     */
-    // TODO:顺序？
-    public void transientCustomSerialization() {
-        String json = gson.toJson(new StuHasTransient("Hello", "Smith", "male", (short) 25));
-        Log.d(TAG, json); // => {"firstName":"Hello","lastName":"Smith","sex":"male"}, does not have transient age 25
-    }
-
-    /**
-     * json string -> transient bean
-     */
-    public void transientCustomDeserialization() {
-//        String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
-        String json = "{\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
-        Log.d(TAG, gson.fromJson(json, StuHasTransient.class).toString());
-    }
-
-    /**
      * Collection -> json string
      */
     public void collectionSerialization() {
@@ -210,10 +198,10 @@ public class Test {
         Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo13.getClass()));   // {value={firstName=Catty, lastName=Smith, sex=male, age=25.0}}
     }
 
-    /*
-    属性重命名 @SerializedName 注解
-    Actual: {"name":"A", "age":24, "email_address":"ABC@example.com" }
-    Expect: {"name":"A", "age":24, "emailAddress":"ABC@example.com" }
+    /**
+     * 属性重命名 @SerializedName 注解
+     * Actual: {"name":"A", "age":24, "email_address":"ABC@example.com" }
+     * Expect: {"name":"A", "age":24, "emailAddress":"ABC@example.com" }
      */
     private void serializedNameSerialization() {
         StuHasSerializedName stu = new StuHasSerializedName("A", 24, "ABC@example.com");
@@ -240,5 +228,41 @@ public class Test {
         String json = "{\"age\":24,\"email_address\":\"ABC@example.com\",\"email\":\"ABC@example.com\",\"name\":\"A\"}";
         StuHasSerializedName2 stu = gson.fromJson(json, StuHasSerializedName2.class);
         Log.d(TAG, stu.toString()); // {name='A', age=24, email='ABC@example.com'}
+    }
+
+    /**
+     * @Expose:忽略某个字段
+     */
+    private void expose() {
+        // If gson = new Gson(), @Expose not work.
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+        StuHasExpose bean = new StuHasExpose("A", "ABC@example.com", 15, true);
+        System.out.println(bean.toString());    // {name='A', email='ABC@example.com', age=15, isDeveloper=true}
+
+        String json = gson.toJson(bean);
+        System.out.println(json);   // {"name":"A","isDeveloper":true}
+
+        String json2 = "{\"name\":\"A\",\"email\":\"ABC@example.com\",\"age\":15,\"isDeveloper\":true}";
+        StuHasExpose bean2 = gson.fromJson(json2, StuHasExpose.class);
+        System.out.println(bean2.toString());   // {name='A', email='null', age=15, isDeveloper=false}
+    }
+
+    /**
+     * transient: 忽略某个字段
+     * transient bean -> json string
+     */
+    // TODO:顺序？
+    public void transientCustomSerialization() {
+        String json = gson.toJson(new StuHasTransient("Hello", "Smith", "male", (short) 25));
+        Log.d(TAG, json); // => {"firstName":"Hello","lastName":"Smith","sex":"male"}, does not have transient age 25
+    }
+
+    /**
+     * json string -> transient bean
+     */
+    public void transientCustomDeserialization() {
+//        String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
+        String json = "{\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
+        Log.d(TAG, gson.fromJson(json, StuHasTransient.class).toString());
     }
 }

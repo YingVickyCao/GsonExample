@@ -27,6 +27,7 @@ public class Test {
     }
 
     private void current() {
+        collectionDeserialization();
     }
 
     private void all() {
@@ -41,7 +42,6 @@ public class Test {
 
         collectionSerialization();
         collectionDeserialization();
-        collectionDeserialization2();
 
         genericTypes_Serialization_Deserialization();
 
@@ -138,47 +138,86 @@ public class Test {
      * Collection -> json string
      */
     public void collectionSerialization() {
-        Collection<Integer> ints = new ArrayList<>();
-        ints.add(1);
-        ints.add(2);
-        ints.add(3);
-        ints.add(4);
-        ints.add(5);
+        // Collection
+        {
+            Collection<Integer> ints = new ArrayList<>();
+            ints.add(1);
+            ints.add(2);
+            ints.add(3);
 
-        // Serialization
-        String json = gson.toJson(ints);  // ==> json is [1,2,3,4,5]
-        Log.d(TAG, json);
+            String json = gson.toJson(ints);  // [1,2,3]
+            System.out.println(json);
+        }
+
+        // List
+        {
+            List<Integer> strings = new ArrayList<>();
+            strings.add(1);
+            strings.add(2);
+            strings.add(3);
+            String json = gson.toJson(strings);
+            System.out.println(json); // [1,2,3]
+        }
+        // Set
+        {
+            Set<Integer> set = new HashSet<>();
+            set.add(1);
+            set.add(2);
+            set.add(3);
+            String json = gson.toJson(set);
+            System.out.println(json);// [1,2,3]
+        }
+
+        // Map
+        {
+            HashMap<Integer, Integer> words = new HashMap<>();
+            words.put(1, 11);
+            words.put(2, 22);
+            words.put(3, 33);
+            String json = gson.toJson(words);
+            System.out.println(json);// {"1":11,"2":22,"3":33}
+        }
     }
 
     /**
      * json string -> Collection
      */
     public void collectionDeserialization() {
-        String json = "[1,2,3,4,5]";
-        Log.d(TAG, "collectionDeserialization," + json);
+        // Collection
+        {
+            String json = "[1,2,3]";
+            Type collectionType = new TypeToken<Collection<Integer>>() {
+            }.getType();
+            Collection<Integer> ints1 = gson.fromJson(json, collectionType);
+            System.out.println(ints1.toString()); // [1, 2, 3]
+        }
 
-        // Deserialization
-        Type collectionType = new TypeToken<Collection<Integer>>() {
-        }.getType();
+        // List
+        {
+            String json = "[1,2,3]";
+            Type listType = new TypeToken<List<Integer>>() {
+            }.getType();
+            Collection<Integer> ints2 = gson.fromJson(json, listType);
+            System.out.println(ints2); // [1, 2, 3]
+        }
+        // Set
+        {
+            String json = "[1,2,3]";
+            Type listType = new TypeToken<Set<Integer>>() {
+            }.getType();
+            Collection<Integer> ints2 = gson.fromJson(json, listType);
+            System.out.println(ints2); // [1, 2, 3]
+        }
 
-        Collection<Integer> ints2 = gson.fromJson(json, collectionType);
-        Log.d(TAG, "collectionDeserialization," + ints2.toString());
-    }
+        // Map
+        {
+            String json = "{\"1\":11,\"2\":22,\"3\":33}";
+            Type type = new TypeToken<HashMap<Integer, Integer>>() {
+            }.getType();
 
-    /**
-     * json string -> Collection
-     */
-    public void collectionDeserialization2() {
-        // Serialization
-        String json = "[1,2,3,4,5]";
-        Log.d(TAG, "collectionDeserialization2," + json);
-
-        // Deserialization
-        Type collectionType = new TypeToken<List<Integer>>() {
-        }.getType();
-
-        Collection<Integer> ints2 = gson.fromJson(json, collectionType);
-        Log.d(TAG, "collectionDeserialization2," + ints2.toString());
+            HashMap<Integer, Integer> map = gson.fromJson(json, type);
+            System.out.println(map.toString()); // {1=11, 2=22, 3=33}
+        }
     }
 
     /**
@@ -264,5 +303,15 @@ public class Test {
 //        String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
         String json = "{\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
         Log.d(TAG, gson.fromJson(json, StuHasTransient.class).toString());
+    }
+
+    private void check_null() {
+        User user = new User(null, "ABC@example.com", false, 27);
+        String json = gson.toJson(user);
+        System.out.println(json); // {"email":"ABC@example.com","isDeveloper":false,"age":27}
+
+        String json2 = "{\"isDeveloper\": true, \"name\": \"C\" }";
+        User user2 = gson.fromJson(json2, User.class);
+        System.out.println(user2.toString()); // {name='C', email='null', isDeveloper=true, age=0}
     }
 }

@@ -38,7 +38,7 @@ String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\
 gson.fromJson(json, Stu.class)
 ```
 
-# 4 Collection （Generic Types） <-> json string
+# 4 Collection <-> json string
 
 ```java
 // Collection -> json string
@@ -56,6 +56,8 @@ Collection<Integer> ints2 = gson.fromJson(json, collectionType);
 
 ```
 
+# 5 Generic Types <-> json string
+
 ```java
 Foo<Integer> foo12 = new Foo<>(1024);
 // Generic Types -> json string
@@ -66,7 +68,7 @@ Log.d(TAG, "genericTypes: " + json); // {"value":1024}
 Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo12.getClass()));   // {value=1024.0}
 ```
 
-# 5 属性重命名 `@SerializedName`
+# 6 属性重命名 `@SerializedName`
 
 用@SerializedName 改变字段的命名
 
@@ -85,7 +87,7 @@ StuHasSerializedName2 stu = gson.fromJson(json, StuHasSerializedName2.class);
 Log.d(TAG, stu.toString()); // {name='A', age=24, email='ABC@example.com'}
 ```
 
-# 7 (反）序列化中如何忽略一个属性？
+# 7 序列化 和 反序列化中如何忽略一个属性？
 
 - `@Expose`
 
@@ -127,9 +129,28 @@ public class StuHasTransient {
 }
 ```
 
-# 7 GsonBuilder
+# 8 GsonBuilder
 
-When:以非标准的方式使用 Gson,使用 GsonBuilder 定制 Gson 部分模块
+- When:以非标准的方式使用 Gson,使用 GsonBuilder 定制 Gson 部分模块
+- 命名策略(FieldNamingPolicy)  
+  FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES:  
+  会先根据大小写字符拆分属性名称，再用小写替换掉大写，替换掉的字母以\_开头
+
+  FieldNamingPolicy.LOWER_CASE_WITH_DASHES:  
+   会先根据大小写字符拆分属性名称，再用小写替换掉大写，替换掉的字母以-开头
+
+  FieldNamingPolicy.UPPER_CAMEL_CASE:  
+  第一个字母大写
+
+  FieldNamingPolicy.UPPER_CAMEL_CASE_WITH_SPACES:  
+   两个字段，变成了大写字母开头，并以空格隔开
+
+- 当 Json string 符合命名策略，即使名字不一样，Gson 也会执行映射，得到 bean。
+
+# 9 Null
+
+序列化时， Gson 不会为 null 值创建任何 JSON 数据。
+反序列化时，json string 中缺少字段，bean 中该字段为默认值。
 
 # Refs
 

@@ -27,7 +27,6 @@ public class Test {
     }
 
     private void current() {
-
     }
 
     private void all() {

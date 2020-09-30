@@ -152,6 +152,16 @@ public class StuHasTransient {
 序列化时， Gson 不会为 null 值创建任何 JSON 数据。
 反序列化时，json string 中缺少字段，bean 中该字段为默认值。
 
+# 10 Nested Class
+
+# 11 手动序列化和反序列化
+
+- 序列化
+  JsonWriter
+- 反序列化  
+  JsonParser  
+  JsonReader
+
 # Refs
 
 - https://www.jianshu.com/nb/4911520

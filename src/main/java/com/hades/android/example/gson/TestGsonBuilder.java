@@ -1,10 +1,15 @@
 package com.hades.android.example.gson;
 
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.*;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.hades.android.example.gson.builder.PostReviewer;
 import com.hades.android.example.gson.builder.UserNaming;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestGsonBuilder {
 
@@ -19,18 +24,19 @@ public class TestGsonBuilder {
     }
 
     private void current() {
-        lower_case_with_underscores();
     }
 
     private void all() {
-        identity();
-        lower_case_with_underscores();
-        lower_case_with_dashes();
-        upper_camel_case();
-        upper_camel_case_with_spaces();
+        // FieldNamingPolicy
+        fieldNamingPolicy_identity();
+        fieldNamingPolicy_lower_case_with_underscores();
+        fieldNamingPolicy_lower_case_with_dashes();
+        fieldNamingPolicy_upper_camel_case();
+        fieldNamingPolicy_upper_camel_case_with_spaces();
     }
 
-    private void identity() {
+    // FieldNamingPolicy.IDENTITY
+    private void fieldNamingPolicy_identity() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.IDENTITY);
         Gson gson = gsonBuilder.create();
@@ -40,7 +46,7 @@ public class TestGsonBuilder {
         System.out.println(usersJson); // {"Name":"Norman","email_of_developer":"norman@futurestud.io","isDeveloper":true,"_ageOfDeveloper":26}
     }
 
-    private void lower_case_with_underscores() {
+    private void fieldNamingPolicy_lower_case_with_underscores() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES);
         Gson gson = gsonBuilder.create();
@@ -54,7 +60,7 @@ public class TestGsonBuilder {
         System.out.println(bean.toString()); // {reviewerName='Marcus'}
     }
 
-    private void lower_case_with_dashes() {
+    private void fieldNamingPolicy_lower_case_with_dashes() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES);
         Gson gson = gsonBuilder.create();
@@ -64,7 +70,7 @@ public class TestGsonBuilder {
         System.out.println(usersJson);// {"name":"Norman","email_of_developer":"norman@futurestud.io","is-developer":true,"_age-of-developer":26}
     }
 
-    private void upper_camel_case() {
+    private void fieldNamingPolicy_upper_camel_case() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE);
         Gson gson = gsonBuilder.create();
@@ -74,7 +80,7 @@ public class TestGsonBuilder {
         System.out.println(usersJson);// {"Name":"Norman","Email_of_developer":"norman@futurestud.io","IsDeveloper":true,"_AgeOfDeveloper":26}
     }
 
-    private void upper_camel_case_with_spaces() {
+    private void fieldNamingPolicy_upper_camel_case_with_spaces() {
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE_WITH_SPACES);
         Gson gson = gsonBuilder.create();

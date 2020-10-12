@@ -1,5 +1,9 @@
 # Example Code of Gson
 
+| 序列化        | 反序列化        |
+| ------------- | --------------- |
+| gson.toJson() | gson.fromJson() |
+
 # 1 primitive type <-> json string
 
 ```java
@@ -14,7 +18,20 @@ Integer oneInteger = gson.fromJson("1", Integer.class);
 Log.d(TAG, oneInteger + "");    // 1
 ```
 
-# 2 Array <-> json string
+# 2 bean <-> json string
+
+```java
+// bean -> json string
+gson.toJson(new Stu())
+
+// json string -> bean
+String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
+gson.fromJson(json, Stu.class)
+```
+
+# 3 Array <-> json string
+
+Gson 解析 jsonArray 时，有两种方式：数组，List。
 
 ```java
 // Array  -> json string
@@ -27,18 +44,9 @@ String jsonArray = "[1,2,3,4,5]";
 int[] ints2 = gson.fromJson(jsonArray, int[].class);
 ```
 
-# 3 bean <-> json string
+# 4 Generic Types
 
-```java
-// bean -> json string
-gson.toJson(new Stu())
-
-// json string -> bean
-String json = "{\"age\":100,\"firstName\":\"John\",\"lastName\":\"Smith\",\"sex\":\"male\"}";
-gson.fromJson(json, Stu.class)
-```
-
-# 4 Collection <-> json string
+## Generic Types for Collection(e.g.,List) <->json string
 
 ```java
 // Collection -> json string
@@ -53,10 +61,9 @@ gson.toJson(ints); // [1,2]
 Type collectionType = new TypeToken<Collection<Integer>>() {
 }.getType();
 Collection<Integer> ints2 = gson.fromJson(json, collectionType);
-
 ```
 
-# 5 Generic Types <-> json string
+## Generic Types for POJO 类 <->json string
 
 ```java
 Foo<Integer> foo12 = new Foo<>(1024);
@@ -68,7 +75,7 @@ Log.d(TAG, "genericTypes: " + json); // {"value":1024}
 Log.d(TAG, "genericTypes: " + gson.fromJson(json, foo12.getClass()));   // {value=1024.0}
 ```
 
-# 6 属性重命名 `@SerializedName`
+# 6 POJO 类 属性重命名 `@SerializedName`
 
 用@SerializedName 改变字段的命名
 
@@ -166,3 +173,4 @@ public class StuHasTransient {
 
 - https://www.jianshu.com/nb/4911520
 - [jsonschema2pojo](http://www.jsonschema2pojo.org/)
+- https://www.cnblogs.com/baiqiantao/p/7512336.html

@@ -27,6 +27,7 @@ public class Test {
     }
 
     private void current() {
+        arrayDeserialization();
     }
 
     private void all() {
@@ -34,7 +35,7 @@ public class Test {
         baseDeserialization();
 
         arraySerialization();
-        arrayDerialization();
+        arrayDeserialization();
 
         customSerialization();
         customDeserialization();
@@ -94,31 +95,6 @@ public class Test {
     }
 
     /**
-     * Array  -> json string
-     */
-    public void arraySerialization() {
-        int[] ints = {1, 2, 3, 4, 5};
-        String[] strings = {"abc", "def", "ghi"};
-
-        String s1 = gson.toJson(ints);     // [1,2,3,4,5]
-        String s2 = gson.toJson(strings);  // ["abc", "def", "ghi"]
-
-        Log.d(TAG, s1);
-        Log.d(TAG, s2);
-    }
-
-    /**
-     * json string -> array
-     */
-    public void arrayDerialization() {
-        String jsonArray = "[1,2,3,4,5]";
-
-        // Deserialization
-        int[] ints2 = gson.fromJson(jsonArray, int[].class);
-        System.out.println(Arrays.toString(ints2));
-    }
-
-    /**
      * bean -> json string
      */
     public void customSerialization() {
@@ -137,6 +113,34 @@ public class Test {
         Log.d(TAG, gson.fromJson(json2, Stu.class).toString()); // => {firstName='John', lastName='Smith', sex='male', age=100}
     }
 
+    /**
+     * Array  -> json string
+     */
+    public void arraySerialization() {
+        int[] ints = {1, 2, 3, 4, 5};
+        String[] strings = {"abc", "def", "ghi"};
+
+        String s1 = gson.toJson(ints);     // [1,2,3,4,5]
+        String s2 = gson.toJson(strings);  // ["abc", "def", "ghi"]
+
+        Log.d(TAG, s1);
+        Log.d(TAG, s2);
+    }
+
+    /**
+     * json string -> array
+     */
+    public void arrayDeserialization() {
+        String jsonArray1 = "[1,2,3,4,5]";
+        String jsonArray2 = "[\"abc\", \"def\", \"ghi\"]";
+
+        // Deserialization
+        int[] ints2 = gson.fromJson(jsonArray1, int[].class);
+        System.out.println(Arrays.toString(ints2)); // [1, 2, 3, 4, 5]
+
+        String[] strings = gson.fromJson(jsonArray2, String[].class);
+        System.out.println(Arrays.toString(strings));   // [abc, def, ghi]
+    }
 
     /**
      * Collection -> json string

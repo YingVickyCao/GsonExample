@@ -11,6 +11,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,14 @@ public class TestManual {
     }
 
     private void init() {
+
+    }
+
+    private void current() {
+        manual_Serialization_JsonWriter();
+    }
+
+    private void all() {
         String json1 = "[" +
                 "{\"name\":\"A\",\"age\":25}" +
                 ",{\"name\":\"B\",\"age\":24}" +
@@ -33,10 +42,6 @@ public class TestManual {
 
         manual_Deserialization_JsonReader(json1);
         manual_Deserialization_JsonReader(json2);
-    }
-
-    private void current() {
-        manual_Serialization_JsonWriter();
     }
 
     // 手动序列化和反序列化
@@ -84,6 +89,7 @@ public class TestManual {
                     .name("name").value("A")
                     .name("age").value(25)
                     .endObject();
+//            System.out.println(writer.toString());;
             writer.flush();
             writer.close();
         } catch (IOException ex) {

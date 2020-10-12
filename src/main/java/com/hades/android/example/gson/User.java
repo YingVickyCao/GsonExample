@@ -1,10 +1,13 @@
 package com.hades.android.example.gson;
 
 public class User {
-    String name;
-    String email;
-    boolean isDeveloper;
-    int age;
+    public String name;
+    public String email;
+    public boolean isDeveloper;
+    public int age;
+
+    public User() {
+    }
 
     public User(String name, String email, boolean isDeveloper, int age) {
         this.name = name;

@@ -1,15 +1,10 @@
 package com.hades.android.example.gson;
 
-import com.google.gson.*;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hades.android.example.gson.builder.PostReviewer;
 import com.hades.android.example.gson.builder.UserNaming;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestGsonBuilder {
 

@@ -1,5 +1,7 @@
 # Example Code of Gson
 
+Json 字符串原理：字符串解析，符号对称
+
 | 序列化        | 反序列化        |
 | ------------- | --------------- |
 | gson.toJson() | gson.fromJson() |
